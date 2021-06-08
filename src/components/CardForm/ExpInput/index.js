@@ -10,7 +10,6 @@ export function isValidDate(month, year) {
   return true;
 }
 
-
 function ExpMonthInput(props) {
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');

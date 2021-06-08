@@ -9,7 +9,6 @@ import Header from './components/Header';
 function App() {
   return (
     <div className='app-content'>
-
       <div className='app-form'>
         <Header>Enter Your Credit Card Info</Header>
         <CardForm />
