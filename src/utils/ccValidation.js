@@ -1,3 +1,18 @@
+const supportedCardTypes = [
+  {
+    name: 'VISA',
+    isType: (ccNumber) => /^4/.test(ccNumber),
+    isComplete: (ccNumber) => /^4[0-9]{12}(?:[0-9]{3})?$/.test(ccNumber),
+    cscCheck: (csc) => csc.length === 3
+  },
+  {
+    name: 'AMEX',
+    isType: (ccNumber) => /^3[47]/.test(ccNumber),
+    isComplete: (ccNumber) => /^3[47][0-9]{13}$/.test(ccNumber),
+    cscCheck: (csc) => csc.length === 4
+  },
+];
+
 // Implemntation of Luhn Algorithm https://en.wikipedia.org/wiki/Luhn_algorithm
 export function isMod10(ccNumber) {
   const ccDigits = ccNumber.split('');
@@ -12,13 +27,7 @@ export function isMod10(ccNumber) {
   return (sum % 10) === 0;
 }
 
-export const isVisa = (ccNumber) => /^4/.test(ccNumber);
-export const isCompleteVisa = (ccNumber) => /^4[0-9]{12}(?:[0-9]{3})?$/.test(ccNumber);
-
-export const isAmex = (ccNumber) => /^3[47]/.test(ccNumber);
-export const isCompleteAmex = (ccNumber) => /^3[47][0-9]{13}$/.test(ccNumber);
-
-export const isCompleteCard = (ccNumber) => [isCompleteVisa, isCompleteAmex].some(func => func(ccNumber));
+export const isCompleteCard = (ccNumber) => supportedCardTypes.some(type => type.isComplete(ccNumber));
 
 export function isCompleteCCNumber(ccNumber) {
   const sanitizedCCNumber = ccNumber.replace(/\D/g, '');
@@ -26,23 +35,15 @@ export function isCompleteCCNumber(ccNumber) {
 }
 
 export function cardType(ccNumber) {
-  if (isAmex(ccNumber)) {
-    return 'AMEX';
-  }
-  if (isVisa(ccNumber)) {
-    return 'VISA';
-  }
-  return '';
+  const type = supportedCardTypes.find(x => x.isType(ccNumber));
+  return (type && type.name) || '';
 }
 
 export function isValidCSC(ccNumber, csc) {
   const sanitizedCSC = csc.replace(/\D/g, '');
-  const type = cardType(ccNumber);
-  if (type === 'AMEX') {
-    return sanitizedCSC.length === 4;
-  }
-  if (type === 'VISA') {
-    return sanitizedCSC.length === 3;
+  const type = supportedCardTypes.find(x => x.isType(ccNumber));
+  if (type) {
+    return type.cscCheck(sanitizedCSC);
   }
   return false;
 }
