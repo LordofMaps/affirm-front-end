@@ -1,0 +1,9 @@
+.card-type {
+  position: absolute;
+  font-size: 0.5em;
+  line-height: 1rem;
+  height: 1rem;
+  padding: 1rem 0;
+  margin: 0;
+  margin-left: 16rem;
+}
